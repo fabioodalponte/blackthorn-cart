@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:9.6
+    container_name: blackthorn-postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=321
+      - POSTGRES_DB=bt
+    ports:
+      - 5432:5432
