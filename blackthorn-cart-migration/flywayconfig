@@ -1,0 +1,4 @@
+flyway.url=jdbc:postgresql://localhost:5432/cart-db
+flyway.user=root
+flyway.password=321
+flyway.locations=filesystem:/path/to/migrations
