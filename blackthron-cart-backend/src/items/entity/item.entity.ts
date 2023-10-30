@@ -1,13 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
-
+/* eslint-disable prettier/prettier */
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Item {
-    @PrimaryGeneratedColumn()
-    id: number;
+  cartItems: any;
+  
+  constructor(partial: Partial<Item>) {
+    Object.assign(this, partial);
+  }
 
-    @Column()
-    name: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    description: string;
+  @Column()
+  name: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  price: number;
+
+  @Column()
+  stockAmount: number;
 }

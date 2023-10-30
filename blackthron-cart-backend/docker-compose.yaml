@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/app
+
+  db:
+    image: postgres:11
+    container_name: blackthorn-postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=321
+      - POSTGRES_DB=bt
+    ports:
+      - 5432:5432

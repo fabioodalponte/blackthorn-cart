@@ -3,11 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ItemsModule } from './items/items.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CartsModule } from './carts/carts.module';
 
 @Module({
-  imports: [ItemsModule,
-  TypeOrmModule.forRoot(
-    {
+  imports: [
+    ItemsModule,
+    TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
@@ -16,7 +17,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'bt',
       autoLoadEntities: true,
       synchronize: true,
-    })
+    }),
+    CartsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,38 @@
+#### ITEMS ####
+
+GET http://localhost:3000/items
+###
+POST http://localhost:3000/items
+Content-Type: application/json
+
+{
+    "name": "Item 1",
+    "price": "10",
+    "stockAmount": "10"
+}
+###
+PUT http://localhost:3000/items/45
+Content-Type: application/json
+
+{
+    "name": "Updated Item 1",
+    "price": "11"
+}
+###
+DELETE http://localhost:3000/items/5
+
+####### Carts ####
+
+###
+GET http://localhost:3000/carts/1
+###
+POST http://localhost:3000/carts
+Content-Type: application/json
+{
+  "subtotal": 0,
+  "discounts": 0,
+  "taxes": 0,
+  "total": 0,
+}
+###
+PUT http://localhost:3000/carts/1/add-item/5
