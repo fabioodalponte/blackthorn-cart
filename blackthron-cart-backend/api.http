@@ -24,7 +24,7 @@ DELETE http://localhost:3000/items/5
 ####### Carts ####
 
 ###
-GET http://localhost:3000/carts/1
+GET http://localhost:3000/carts/2
 ###
 POST http://localhost:3000/carts
 Content-Type: application/json
@@ -32,7 +32,12 @@ Content-Type: application/json
   "subtotal": 0,
   "discounts": 0,
   "taxes": 0,
-  "total": 0,
+  "total": 0
 }
 ###
-PUT http://localhost:3000/carts/1/add-item/5
+PUT http://localhost:3000/carts/1/add-item/3
+Content-Type: application/json
+{
+  "quantity": 2
+}
+

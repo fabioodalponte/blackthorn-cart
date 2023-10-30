@@ -8,12 +8,12 @@ services:
     volumes:
       - .:/home/node/app
 
-  db:
-    image: postgres:11
-    container_name: blackthorn-postgres
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=321
-      - POSTGRES_DB=bt
-    ports:
-      - 5432:5432
+  # db:
+  #   image: postgres:11
+  #   container_name: blackthorn-postgres
+  #   environment:
+  #     - POSTGRES_USER=admin
+  #     - POSTGRES_PASSWORD=321
+  #     - POSTGRES_DB=bt
+  #   ports:
+  #     - 5432:5432
