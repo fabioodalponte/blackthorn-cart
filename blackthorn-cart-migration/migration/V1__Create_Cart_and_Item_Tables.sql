@@ -1,14 +1,17 @@
--- Create Cart table
-CREATE TABLE Cart (
-    cart_id INT PRIMARY KEY,
-    created_at TIMESTAMP,
-    is_abandoned BOOLEAN,
-    user_id INT
+CREATE TABLE cart (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  subtotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  discounts DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  taxes DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  total DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  is_abandoned BOOLEAN
 );
 
--- Create Item table
-CREATE TABLE Item (
-    item_id INT PRIMARY KEY,
-    name VARCHAR(255),
-    price DECIMAL(10, 2)
+-- Item table
+CREATE TABLE item (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  stock_amount INT NOT NULL
 );
