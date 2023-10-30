@@ -17,6 +17,6 @@ export class Item {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column()
+  @Column({ name: 'stock_amount' })
   stockAmount: number;
 }
