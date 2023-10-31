@@ -90,14 +90,13 @@ export class CartsService {
     }
 
     cart.subtotal = await this.calculateCartSubTotal(cart);
-    //cart.total = await this.calculateCartTotal(cart);
+    cart.total = await this.calculateCartTotal(cart);
 
     return this.cartRepository.save(cart);
   }
   
   calculateCartTotal(cart: Cart): number | PromiseLike<number> {
-    console.log('calculateCartTotal', cart.subtotal, cart.taxes, cart.discounts);
-    cart.total = cart.subtotal + cart.taxes - cart.discounts;
+    cart.total = Number(cart.subtotal) + Number(cart.taxes) - Number(cart.discounts);
     return cart.total;
   }
 
