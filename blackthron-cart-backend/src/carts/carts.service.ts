@@ -24,22 +24,17 @@ export class CartsService {
     return this.cartRepository.findOne({ where: { id }, relations: { cartItems: true } });
   }
 
-  async removeItemFromCart(cartId: number, cartItemId: number): Promise<void> {
+  async removeItemFromCart(cartId: number, itemId: number): Promise<void> {
     const cart = await this.getCartById(cartId);
-    if (!cart) {
-      throw new NotFoundException(`Cart with ID ${cartId} not found`);
-    }
-
-    if (!cart.cartItems) {
-      throw new NotFoundException(`Cart item with ID ${cartItemId} not found`);
-    }
-
-    const cartItem = cart.cartItems.find((item) => item.id === cartItemId);
+    const cartItem = await this.cartItemService.findCartItemByCartAndItem(cart.id, itemId);
     if (!cartItem) {
-      throw new NotFoundException(`Cart item with ID ${cartItemId} not found`);
+      throw new NotFoundException(`Item ${itemId} not found in cart ${cartId}`);
     }
+    
+    const totalCartItem = (cartItem.quantity * cartItem.price);
+    await this.cartItemService.deleteCartItem(cartItem.id);
 
-    await this.cartItemService.deleteCartItem(cartItemId);
+    this.cartRepository.update(cart.id, { total: (cart.total - totalCartItem), subtotal: (cart.subtotal-totalCartItem)});
   }
 
   async addItemToCart(
