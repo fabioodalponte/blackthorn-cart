@@ -16,6 +16,14 @@ export class CartItemService {
     return this.cartItemRepository.save(newCartItem);
   }
 
+  async save(cartItem: Partial<CartItem>): Promise<CartItem> {
+    return this.cartItemRepository.save(cartItem);
+  }
+
+  async update(cartItem: Partial<CartItem>) {
+    await this.cartItemRepository.update(cartItem.id, cartItem);
+  }
+
   async updateCartItemQuantity(
     id: number,
     quantity: number,
@@ -27,6 +35,15 @@ export class CartItemService {
 
     cartItem.quantity = quantity;
     return this.cartItemRepository.save(cartItem);
+  }
+
+  async findCartItemByCartAndItem(cartId: number, itemId: number): Promise<CartItem> {
+    return await this.cartItemRepository.findOne({ 
+      where: { 
+        cart: { id: cartId }, 
+        item: { id: itemId } 
+      } 
+    });
   }
 
   async deleteCartItem(id: number): Promise<void> {

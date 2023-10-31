@@ -11,12 +11,13 @@ Content-Type: application/json
     "stockAmount": "10"
 }
 ###
-PUT http://localhost:3000/items/45
+PUT http://localhost:3000/items/1
 Content-Type: application/json
 
 {
     "name": "Updated Item 1",
-    "price": "11"
+    "price": "11",
+    "stockAmount": "11"
 }
 ###
 DELETE http://localhost:3000/items/5
@@ -24,20 +25,31 @@ DELETE http://localhost:3000/items/5
 ####### Carts ####
 
 ###
-GET http://localhost:3000/carts/2
+GET http://localhost:3000/carts/7
 ###
 POST http://localhost:3000/carts
 Content-Type: application/json
+
 {
   "subtotal": 0,
-  "discounts": 0,
-  "taxes": 0,
-  "total": 0
+  "discounts": 11,
+  "taxes": 11,
+  "total": 0,
+  "isAbandoned": false
 }
+
 ###
-PUT http://localhost:3000/carts/1/add-item/3
+PUT http://localhost:3000/carts/16/add-item/2
 Content-Type: application/json
+
 {
   "quantity": 2
 }
 
+###
+PUT http://localhost:3000/carts/16/remove-item/1
+Content-Type: application/json
+
+{
+  "quantity": 1
+}

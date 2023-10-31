@@ -15,6 +15,7 @@ export class CartsService {
   ) {}
 
   async createCart(createCart: Cart): Promise<Cart> {
+    console.log('createCart', createCart);
     const newCart = this.cartRepository.create(createCart);
     return this.cartRepository.save(newCart);
   }
@@ -46,40 +47,75 @@ export class CartsService {
     itemId: number,
     quantity: number,
   ): Promise<Cart> {
-    const cart = await this.getCartById(cartId);
+    
+    let cart = await this.getCartById(cartId);
     if (!cart) {
-      throw new NotFoundException(`Cart with ID ${cartId} not found`);
+      cart = this.cartRepository.create({ id: cartId });
+      await this.cartRepository.save(cart);
     }
 
-    const item = await this.itemsService.findItemById(itemId);
+    const item = await this.validateItemAndStock(itemId, quantity);
 
-    if (!item) {
-      throw new NotFoundException(`Item with ID ${itemId} not found`);
+    let cartItem = await this.cartItemService.findCartItemByCartAndItem(cart.id, item.id);
+
+    if(cartItem){
+      cartItem.quantity += quantity;
+      cartItem.price = item.price;
+      await this.cartItemService.update(cartItem);
+    } else {
+      cartItem = await this.cartItemService.createCartItem({
+        cart,
+        item,
+        quantity,
+        price: item.price,
+      });
+      await this.cartItemService.save(cartItem);
     }
-
-    const cartItem = await this.cartItemService.createCartItem({
-      cart,
-      item,
-      quantity,
-    });
+    console.log('addItemToCart', cartItem);
+    
 
     if (!cart.cartItems) {
       cart.cartItems = [];
     }
 
     cart.cartItems.push(cartItem);
+
+    cart.subtotal = await this.calculateCartSubTotal(cart);
     cart.total = await this.calculateCartTotal(cart);
+
+    item.stockAmount = item.stockAmount - quantity;
+    await this.itemsService.updateItem(item.id, item);
 
     return this.cartRepository.save(cart);
   }
+  
+  calculateCartTotal(cart: Cart): number | PromiseLike<number> {
+    console.log('calculateCartTotal', cart.subtotal, cart.taxes, cart.discounts);
+    cart.total = cart.subtotal + cart.taxes - cart.discounts;
+    return cart.total;
+  }
 
-  async calculateCartTotal(cart: Cart): Promise<number> {
-    let total = 0;
+  private async validateItemAndStock(itemId: number, quantity: number) {
+    const item = await this.itemsService.findItemById(itemId);
+
+    if (!item) {
+      throw new NotFoundException(`Item with ID ${itemId} not found`);
+    }
+
+    if (item.stockAmount < 1 || item.stockAmount < quantity) {
+      throw new NotFoundException(`Item ${item.name} out of stock`);
+    }
+    return item;
+  }
+
+  async calculateCartSubTotal(cart: Cart): Promise<number> {
+    let subTotal = 0;
     if (cart.cartItems) {
       for (const cartItem of cart.cartItems) {
-        total += cartItem.price * cartItem.quantity;
+        subTotal += cartItem.price * cartItem.quantity;
+        console.log('calculateCartSubTotal', subTotal);
       }
     }
-    return total;
+    return subTotal;
   }
 }

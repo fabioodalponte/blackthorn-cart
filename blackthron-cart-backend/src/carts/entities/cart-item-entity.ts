@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Cart } from './cart.entity';
 import { Item } from 'src/items/entity/item.entity';
-
 @Entity()
 export class CartItem {
   @PrimaryGeneratedColumn()

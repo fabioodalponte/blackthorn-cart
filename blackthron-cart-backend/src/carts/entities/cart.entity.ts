@@ -34,6 +34,6 @@ export class Cart {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   total: number;
 
-  @Column({ name: 'item_id' })
+  @Column({ name: 'is_abandoned', default: false })
   isAbandoned: boolean;
 }
