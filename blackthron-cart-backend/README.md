@@ -30,3 +30,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+### Endpoints / Swagger ####
+
+http://localhost:3000/docs#/
+

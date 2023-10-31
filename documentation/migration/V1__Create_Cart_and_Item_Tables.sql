@@ -1,0 +1,17 @@
+CREATE TABLE cart (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  subtotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  discounts DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  taxes DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  total DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  is_abandoned BOOLEAN
+);
+
+-- Item table
+CREATE TABLE item (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  stock_amount INT NOT NULL
+);
