@@ -19,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
       database: 'bt',
       autoLoadEntities: true,
       dropSchema: false,
+      logging: true,
       synchronize: true,
       ssl: {
         rejectUnauthorized: false,

@@ -19,7 +19,7 @@ export class Cart {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  @OneToMany(() => CartItem, cartItem => cartItem.cart, { cascade: true })
   cartItems: CartItem[];
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })

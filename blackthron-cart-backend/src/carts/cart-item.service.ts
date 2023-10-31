@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CartItem } from './entities/cart-item-entity';
@@ -30,7 +30,7 @@ export class CartItemService {
   ): Promise<CartItem> {
     const cartItem = await this.cartItemRepository.findOneBy({ id });
     if (!cartItem) {
-      //TODO Handle error (cart item not found)
+      throw new NotFoundException(`Cart item with ID ${id} not found`);
     }
 
     cartItem.quantity = quantity;

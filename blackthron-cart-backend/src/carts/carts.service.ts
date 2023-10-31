@@ -20,8 +20,8 @@ export class CartsService {
     return this.cartRepository.save(newCart);
   }
 
-  async getCartById(id: number): Promise<Cart | undefined> {
-    return this.cartRepository.findOneBy({ id });
+  async getCartById(id: number): Promise<Cart> {
+    return this.cartRepository.findOne({ where: { id }, relations: { cartItems: true } });
   }
 
   async removeItemFromCart(cartId: number, cartItemId: number): Promise<void> {
@@ -50,8 +50,7 @@ export class CartsService {
     
     let cart = await this.getCartById(cartId);
     if (!cart) {
-      cart = this.cartRepository.create({ id: cartId });
-      await this.cartRepository.save(cart);
+      this.createCart(new Cart({ id: cartId }));
     }
 
     const item = await this.validateItemAndStock(itemId, quantity);
@@ -61,7 +60,7 @@ export class CartsService {
     if(cartItem){
       cartItem.quantity += quantity;
       cartItem.price = item.price;
-      await this.cartItemService.update(cartItem);
+      cart.cartItems.find(val => val.id == cartItem.id);
     } else {
       cartItem = await this.cartItemService.createCartItem({
         cart,
@@ -69,22 +68,29 @@ export class CartsService {
         quantity,
         price: item.price,
       });
-      await this.cartItemService.save(cartItem);
     }
-    console.log('addItemToCart', cartItem);
-    
-
-    if (!cart.cartItems) {
-      cart.cartItems = [];
-    }
-
-    cart.cartItems.push(cartItem);
-
-    cart.subtotal = await this.calculateCartSubTotal(cart);
-    cart.total = await this.calculateCartTotal(cart);
+    await this.cartItemService.save(cartItem);
 
     item.stockAmount = item.stockAmount - quantity;
+  
     await this.itemsService.updateItem(item.id, item);
+
+     if (!cart.cartItems) {
+       cart.cartItems = [];
+     }
+
+     const itemIndex = cart.cartItems.findIndex(val => val.id === cartItem.id);
+
+     if (itemIndex !== -1) {
+      // Override the cartItem
+      cart.cartItems[itemIndex] = cartItem;
+    } else {
+      // Add the new cartItem
+      cart.cartItems.push(cartItem);
+    }
+
+    cart.subtotal = await this.calculateCartSubTotal(cart);
+    //cart.total = await this.calculateCartTotal(cart);
 
     return this.cartRepository.save(cart);
   }
@@ -113,7 +119,6 @@ export class CartsService {
     if (cart.cartItems) {
       for (const cartItem of cart.cartItems) {
         subTotal += cartItem.price * cartItem.quantity;
-        console.log('calculateCartSubTotal', subTotal);
       }
     }
     return subTotal;
