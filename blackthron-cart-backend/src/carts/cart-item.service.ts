@@ -6,6 +6,10 @@ import { CartItem } from './entities/cart-item-entity';
 
 @Injectable()
 export class CartItemService {
+  
+  findCartItemById(id: number): CartItem | PromiseLike<CartItem> {
+    return this.cartItemRepository.findOneBy({id});
+  }
   constructor(
     @InjectRepository(CartItem)
     private cartItemRepository: Repository<CartItem>,

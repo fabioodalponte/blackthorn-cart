@@ -7,6 +7,7 @@ import { ItemsService } from 'src/items/items.service';
 
 @Injectable()
 export class CartsService {
+
   constructor(
     @InjectRepository(Cart)
     private cartRepository: Repository<Cart>,
@@ -48,6 +49,10 @@ export class CartsService {
       this.createCart(new Cart({ id: cartId }));
     }
 
+    if(cart.isAbandoned){
+      throw new NotFoundException(`Cart ${cartId} is abandoned`);
+    }
+
     const item = await this.validateItemAndStock(itemId, quantity);
 
     let cartItem = await this.cartItemService.findCartItemByCartAndItem(cart.id, item.id);
@@ -77,10 +82,8 @@ export class CartsService {
      const itemIndex = cart.cartItems.findIndex(val => val.id === cartItem.id);
 
      if (itemIndex !== -1) {
-      // Override the cartItem
       cart.cartItems[itemIndex] = cartItem;
     } else {
-      // Add the new cartItem
       cart.cartItems.push(cartItem);
     }
 
@@ -116,5 +119,33 @@ export class CartsService {
       }
     }
     return subTotal;
+  }
+
+  async abandonCart(id: number): Promise<void> {
+    const cart = await this.cartRepository.findOne({ where: { id }, relations: ["cartItems", "cartItems.item"] });
+    
+    if (!cart) {
+      throw new NotFoundException(`Cart with ID ${id} not found`);
+    }
+
+    if(cart.isAbandoned){
+      throw new NotFoundException(`Cart ${id} is already abandoned`);
+    }
+
+    for (const cartItem of cart.cartItems) {
+      const item = await this.itemsService.findItemById(cartItem.item.id);
+      if (item) {
+        item.stockAmount += cartItem.quantity;
+        await this.itemsService.updateItem(item.id, item);
+      }
+    }
+    
+    cart.cartItems.forEach(async (cartItem) => { 
+      await this.cartItemService.deleteCartItem(cartItem.id);
+    });
+    
+    //update abandoned cart on database
+    this.cartRepository.update(cart.id, { isAbandoned: true});
+
   }
 }

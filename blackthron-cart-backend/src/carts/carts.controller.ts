@@ -32,4 +32,9 @@ export class CartsController {
   ): Promise<void> {
     return this.cartService.removeItemFromCart(cartId, cartItemId);
   }
+
+  @Put('abandon/:id')
+  async abandonCart(@Param('id') cartId: number): Promise<void> {
+    return this.cartService.abandonCart(cartId);
+  }
 }
